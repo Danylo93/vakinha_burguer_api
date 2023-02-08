@@ -1,13 +1,15 @@
 import 'dart:convert';
 
-class QrCodeGerencianetModel {
-  final String image;
-  final String code;
 
+class QrCodeGerencianetModel {
+  String image;
+  String code;
+  
   QrCodeGerencianetModel({
     required this.image,
     required this.code,
   });
+
 
   Map<String, dynamic> toMap() {
     return {

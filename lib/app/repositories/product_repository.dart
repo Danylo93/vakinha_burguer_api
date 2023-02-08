@@ -2,22 +2,25 @@ import 'package:mysql1/mysql1.dart';
 import 'package:vakinha_burguer_api/app/core/database/database.dart';
 import 'package:vakinha_burguer_api/app/entities/product.dart';
 
+
 class ProductRepository {
   Future<List<Product>> findAll() async {
     MySqlConnection? conn;
 
     try {
       conn = await Database().openConnection();
-      await Future.delayed(Duration(seconds: 1));
       final result = await conn.query('select * from produto');
+
       return result
-          .map((p) => Product(
-                id: p['id'],
-                name: p['nome'],
-                description: (p['descricao'] as Blob?)?.toString() ?? '',
-                price: p['preco'],
-                image: (p['imagem'] as Blob?)?.toString() ?? '',
-              ))
+          .map(
+            (p) => Product(
+              id: p['id'],
+              name: p['nome'],
+              description: (p['descricao'] as Blob?)?.toString() ?? '',
+              price: p['preco'],
+              image: (p['imagem'] as Blob?)?.toString() ?? '',
+            ),
+          )
           .toList();
     } on MySqlException catch (e, s) {
       print(e);
@@ -32,15 +35,17 @@ class ProductRepository {
     MySqlConnection? conn;
     try {
       conn = await Database().openConnection();
-      await Future.delayed(Duration(seconds: 1));
-      final result = await conn.query(' select * from produto where id = ?', [id]);
-      final mySqlData = result.first;
+      final result =
+          await conn.query('select * from produto where id = ?', [id]);
+
+      final mysqlData = result.first;
+
       return Product(
-        id: mySqlData['id'],
-        name: mySqlData['nome'],
-        description: (mySqlData['descricao'] as Blob?)?.toString() ?? '',
-        price: mySqlData['preco'],
-        image: (mySqlData['imagem'] as Blob?)?.toString() ?? '',
+        id: mysqlData['id'],
+        name: mysqlData['nome'],
+        description: (mysqlData['descricao'] as Blob?)?.toString() ?? '',
+        price: mysqlData['preco'],
+        image: (mysqlData['imagem'] as Blob?)?.toString() ?? '',
       );
     } on MySqlException catch (e, s) {
       print(e);

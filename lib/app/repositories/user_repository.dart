@@ -10,12 +10,11 @@ class UserRepository {
     MySqlConnection? conn;
     try {
       conn = await Database().openConnection();
-      await Future.delayed(const Duration(seconds: 1));
-      final result = await conn.query('''
+      final result = await conn.query(''' 
           select * from usuario
           where email = ?
           and senha = ?
-        ''', [email, CriptyHelper.generatedSha256Hash(password)]);
+         ''', [email, CriptyHelper.generatedSha256Hash(password)]);
 
       if (result.isEmpty) {
         throw UserNotfoundException();
@@ -42,14 +41,20 @@ class UserRepository {
     MySqlConnection? conn;
     try {
       conn = await Database().openConnection();
-      await Future.delayed(const Duration(seconds: 1));
-      final isUserRegiser = await conn.query('select * from usuario where email = ? ', [user.email]);
+
+      final isUserRegiser = await conn
+          .query('select * from usuario where email = ? ', [user.email]);
 
       if (isUserRegiser.isEmpty) {
         await conn.query(''' 
           insert into usuario
           values(?,?,?,?)
-        ''', [null, user.name, user.email, CriptyHelper.generatedSha256Hash(user.password)]);
+        ''', [
+          null,
+          user.name,
+          user.email,
+          CriptyHelper.generatedSha256Hash(user.password)
+        ]);
       } else {
         throw EmailAlreadyRegistered();
       }
@@ -66,13 +71,13 @@ class UserRepository {
     MySqlConnection? conn;
     try {
       conn = await Database().openConnection();
-      await Future.delayed(Duration(seconds: 1));
-      final result = await conn.query('select * from usuario where id = ?', [id]);
-      final mySqlData = result.first;
+      final result =
+          await conn.query('select * from usuario where id = ?', [id]);
+      final mysqlData = result.first;
       return User(
-        id: mySqlData['id'],
-        name: mySqlData['nome'],
-        email: mySqlData['email'],
+        id: mysqlData['id'],
+        name: mysqlData['nome'],
+        email: mysqlData['email'],
         password: '',
       );
     } on MySqlException catch (e, s) {
